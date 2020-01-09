@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eagle SYSTEM "eagle.dtd">
+<eagle version="9.3.0">
+<drawing>
+<settings>
+<setting alwaysvectorfont="no"/>
+<setting verticaltext="up"/>
+</settings>
+<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
+<layers>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="no" active="yes"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="no" active="yes"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="no" active="yes"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="no" active="yes"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="no" active="yes"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="no" active="yes"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="no" active="yes"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="no" active="yes"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="no" active="yes"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="no" active="yes"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="no" active="yes"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="no" active="yes"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="24" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
+<layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="88" name="SimResults" color="9" fill="1" visible="yes" active="yes"/>
+<layer number="89" name="SimProbes" color="9" fill="1" visible="yes" active="yes"/>
+<layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
+<layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="97" name="Info" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="98" name="Guide" color="6" fill="1" visible="yes" active="yes"/>
+</layers>
+<library>
+<packages>
+<package name="INTEL_MKR_EXP_P1">
+<pad name="16" x="0" y="6.35" drill="1" diameter="1.9304"/>
+<pad name="15" x="0" y="3.81" drill="1" diameter="1.9304"/>
+<pad name="1" x="5.08" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="2" x="7.62" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="3" x="10.16" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="4" x="12.7" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="5" x="15.24" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="6" x="17.78" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="7" x="20.32" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="17" x="0" y="8.89" drill="1" diameter="1.9304"/>
+<pad name="18" x="0" y="11.43" drill="1" diameter="1.9304"/>
+<pad name="8" x="5.08" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="9" x="7.62" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="10" x="10.16" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="11" x="12.7" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="12" x="15.24" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="13" x="17.78" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="14" x="20.32" y="13.97" drill="1" diameter="1.9304"/>
+<text x="4.46" y="7.01" size="1.016" layer="21" rot="R180">GND</text>
+<text x="3.19" y="4.47" size="1.016" layer="21" rot="R180">5V</text>
+<text x="5.73" y="-12.04" size="1.016" layer="21" rot="R90">GND</text>
+<text x="8.27" y="-12.04" size="1.016" layer="21" rot="R90">HSPI CLK (IO14)</text>
+<text x="10.81" y="-12.04" size="1.016" layer="21" rot="R90">HSPI MISO (IO12)</text>
+<text x="13.35" y="-12.04" size="1.016" layer="21" rot="R90">HSPI MOSI (IO13)</text>
+<text x="15.89" y="-12.04" size="1.016" layer="21" rot="R90">HSPI SS (IO15) - T1</text>
+<text x="18.43" y="-12.04" size="1.016" layer="21" rot="R90">UART2-TX (IO17)</text>
+<text x="20.97" y="-12.04" size="1.016" layer="21" rot="R90">UART2-RX (IO16)</text>
+<text x="4.48" y="9.06" size="1.016" layer="21" rot="R180">GND</text>
+<text x="4.48" y="11.6" size="1.016" layer="21" rot="R180">3.3V</text>
+<text x="5.75" y="7.79" size="1.016" layer="21" rot="R90">GPI36</text>
+<text x="8.29" y="7.79" size="1.016" layer="21" rot="R90">GPI39</text>
+<text x="10.83" y="6.52" size="1.016" layer="21" rot="R90">I/O exp. 2</text>
+<text x="13.37" y="3.98" size="1.016" layer="21" rot="R90">DAC1 (IO25)</text>
+<text x="15.91" y="3.98" size="1.016" layer="21" rot="R90">DAC2 (IO26)</text>
+<text x="18.45" y="6.52" size="1.016" layer="21" rot="R90">I/O exp. 3</text>
+<text x="20.99" y="6.52" size="1.016" layer="21" rot="R90">I/O exp. 4</text>
+<text x="-3.66" y="-15.15" size="1.9304" layer="21" rot="R90">Exp-P1</text>
+<wire x1="-1.27" y1="15.24" x2="22.86" y2="15.24" width="0.254" layer="21"/>
+<wire x1="22.86" y1="15.24" x2="22.86" y2="-15.24" width="0.254" layer="21"/>
+<wire x1="22.86" y1="-15.24" x2="-1.27" y2="-15.24" width="0.254" layer="21"/>
+<wire x1="-1.27" y1="-15.24" x2="-1.27" y2="15.24" width="0.254" layer="21"/>
+<text x="2.54" y="16.51" size="1.27" layer="21">&gt;NAME</text>
+<text x="-1.27" y="-17.78" size="1.27" layer="27">IntelMKR_ExpP1</text>
+<pad name="19" x="2.54" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="20" x="2.54" y="-13.97" drill="1" diameter="1.9304"/>
+</package>
+<package name="INTEL_MKR_EXP_P2">
+<pad name="16" x="25.4" y="6.35" drill="1" diameter="1.9304"/>
+<pad name="15" x="25.4" y="3.81" drill="1" diameter="1.9304"/>
+<pad name="1" x="5.08" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="2" x="7.62" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="3" x="10.16" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="4" x="12.7" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="5" x="15.24" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="6" x="17.78" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="7" x="20.32" y="-13.97" drill="1" diameter="1.9304"/>
+<pad name="17" x="25.4" y="8.89" drill="1" diameter="1.9304"/>
+<pad name="18" x="25.4" y="11.43" drill="1" diameter="1.9304"/>
+<pad name="8" x="5.08" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="9" x="7.62" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="10" x="10.16" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="11" x="12.7" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="12" x="15.24" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="13" x="17.78" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="14" x="20.32" y="13.97" drill="1" diameter="1.9304"/>
+<text x="21.351" y="4.724" size="1.016" layer="21">GND</text>
+<text x="24.018" y="2.692" size="1.016" layer="21" rot="R270">5V</text>
+<text x="5.73" y="-12.04" size="1.016" layer="21" rot="R90">GND</text>
+<text x="8.27" y="-12.04" size="1.016" layer="21" rot="R90">GPIO32 - T2</text>
+<text x="10.81" y="-12.04" size="1.016" layer="21" rot="R90">GPIO33 - B1</text>
+<text x="13.35" y="-12.04" size="1.016" layer="21" rot="R90">UART1-RX (IO4)</text>
+<text x="15.89" y="-12.04" size="1.016" layer="21" rot="R90">UART1-TX (IO2)</text>
+<text x="18.43" y="-12.04" size="1.016" layer="21" rot="R90">I/O exp. 5</text>
+<text x="20.97" y="-12.04" size="1.016" layer="21" rot="R90">GPIO19</text>
+<text x="21.498" y="7.282" size="1.016" layer="21">GND</text>
+<text x="22.895" y="12.362" size="1.016" layer="21" rot="R270">3.3V</text>
+<text x="5.75" y="10.33" size="1.016" layer="21" rot="R90">NC</text>
+<text x="8.29" y="5.25" size="1.016" layer="21" rot="R90">I/O exp. 6</text>
+<text x="10.83" y="5.25" size="1.016" layer="21" rot="R90">I2C - SCL</text>
+<text x="13.37" y="5.25" size="1.016" layer="21" rot="R90">I2C - SDA</text>
+<text x="15.91" y="3.98" size="1.016" layer="21" rot="R90">GPIO27 - B2</text>
+<text x="18.45" y="5.25" size="1.016" layer="21" rot="R90">I/O exp. 7</text>
+<text x="20.99" y="6.52" size="1.016" layer="21" rot="R90">GPIO05</text>
+<text x="1.42" y="-15.15" size="1.9304" layer="21" rot="R90">Exp-P2</text>
+<wire x1="2.54" y1="15.24" x2="26.67" y2="15.24" width="0.254" layer="21"/>
+<wire x1="26.67" y1="15.24" x2="26.67" y2="-15.24" width="0.254" layer="21"/>
+<wire x1="26.67" y1="-15.24" x2="2.54" y2="-15.24" width="0.254" layer="21"/>
+<wire x1="2.54" y1="-15.24" x2="2.54" y2="15.24" width="0.254" layer="21"/>
+<text x="2.54" y="16.51" size="1.27" layer="21">&gt;NAME</text>
+<text x="-1.27" y="-17.78" size="1.27" layer="27">IntelMKR_ExpP2</text>
+<pad name="19" x="22.86" y="13.97" drill="1" diameter="1.9304"/>
+<pad name="20" x="22.86" y="-13.97" drill="1" diameter="1.9304"/>
+<text x="23.876" y="12.7" size="1.27" layer="21">NC</text>
+<text x="23.368" y="-12.7" size="1.27" layer="21">NC</text>
+</package>
+<package name="LCD_FOOTPRINT">
+<wire x1="0" y1="0" x2="85" y2="0" width="0.127" layer="21"/>
+<wire x1="0" y1="0" x2="0" y2="55" width="0.127" layer="21"/>
+<wire x1="0" y1="55" x2="85" y2="55" width="0.127" layer="21"/>
+<wire x1="85" y1="0" x2="85" y2="55" width="0.127" layer="21"/>
+<hole x="1.24" y="1.24" drill="1.1" locked="yes"/>
+<hole x="1.24" y="53.75" drill="1.1" locked="yes"/>
+<hole x="83.18" y="53.75" drill="1.1" locked="yes"/>
+<hole x="83.18" y="1.24" drill="1.1" locked="yes"/>
+<text x="35.63" y="28.11" size="1.27" layer="21">LCD Footprint</text>
+<rectangle x1="43.42" y1="0" x2="81.42" y2="4" locked="yes" layer="21"/>
+<rectangle x1="43.42" y1="51" x2="81.42" y2="55" layer="21"/>
+<text x="59.09" y="52.41" size="1.27" layer="21">Sticker</text>
+<text x="58.44" y="48.91" size="1.27" layer="21">Sticker</text>
+<text x="59.91" y="4.78" size="1.27" layer="21">Sticker</text>
+<rectangle x1="3" y1="10" x2="7" y2="45" locked="yes" layer="21"/>
+<text x="9.44" y="23.17" size="1.27" layer="21" rot="R90">Flex Cables</text>
+</package>
+</packages>
+<symbols>
+<symbol name="INTEL_MKR_EXP_P1">
+<wire x1="-2.54" y1="-20.32" x2="-2.54" y2="17.78" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="17.78" x2="22.86" y2="17.78" width="0.254" layer="94"/>
+<wire x1="22.86" y1="17.78" x2="22.86" y2="-20.32" width="0.254" layer="94"/>
+<wire x1="22.86" y1="-20.32" x2="-2.54" y2="-20.32" width="0.254" layer="94"/>
+<pin name="GND@16" x="-7.62" y="-2.54" length="middle" direction="pwr"/>
+<pin name="5V@15" x="-7.62" y="-5.08" length="middle" direction="pwr"/>
+<pin name="GND@1" x="5.08" y="-25.4" length="middle" direction="pwr" rot="R90"/>
+<pin name="HSPICLK(IO14)" x="7.62" y="-25.4" length="middle" rot="R90"/>
+<pin name="HSPIMISO(IO12)" x="10.16" y="-25.4" length="middle" rot="R90"/>
+<pin name="HSPIMOSI(IO13)" x="12.7" y="-25.4" length="middle" rot="R90"/>
+<pin name="HSPISS(IO15)-T1" x="15.24" y="-25.4" length="middle" rot="R90"/>
+<pin name="UART2-TX(IO17)" x="17.78" y="-25.4" length="middle" rot="R90"/>
+<pin name="UART2-RX(IO16)" x="20.32" y="-25.4" length="middle" rot="R90"/>
+<pin name="I/OEXP.4" x="20.32" y="22.86" length="middle" rot="R270"/>
+<pin name="I/OEXP.3" x="17.78" y="22.86" length="middle" rot="R270"/>
+<pin name="DAC2(IO26)" x="15.24" y="22.86" length="middle" rot="R270"/>
+<pin name="DAC1(IO25)" x="12.7" y="22.86" length="middle" rot="R270"/>
+<pin name="I/OEXP.2" x="10.16" y="22.86" length="middle" rot="R270"/>
+<pin name="GPI39" x="7.62" y="22.86" length="middle" rot="R270"/>
+<pin name="GPI36" x="5.08" y="22.86" length="middle" rot="R270"/>
+<pin name="3.3V" x="-7.62" y="2.54" length="middle" direction="pwr"/>
+<pin name="GND@17" x="-7.62" y="0" length="middle" direction="pwr"/>
+<text x="-6.35" y="10.16" size="1.27" layer="95" rot="R90">&gt;NAME</text>
+<text x="25.4" y="-20.32" size="1.27" layer="96" rot="R90">IntelMKR_ExpP1</text>
+</symbol>
+<symbol name="INTEL_MKR_EXP_P2">
+<wire x1="2.54" y1="-20.32" x2="2.54" y2="17.78" width="0.254" layer="94"/>
+<wire x1="2.54" y1="17.78" x2="27.94" y2="17.78" width="0.254" layer="94"/>
+<wire x1="27.94" y1="17.78" x2="27.94" y2="-20.32" width="0.254" layer="94"/>
+<wire x1="27.94" y1="-20.32" x2="2.54" y2="-20.32" width="0.254" layer="94"/>
+<pin name="GND@16" x="33.02" y="-2.54" length="middle" direction="pwr" rot="R180"/>
+<pin name="5V@15" x="33.02" y="-5.08" length="middle" direction="pwr" rot="R180"/>
+<pin name="GND@1" x="5.08" y="-25.4" length="middle" direction="pwr" rot="R90"/>
+<pin name="GPIO32-T2" x="7.62" y="-25.4" length="middle" rot="R90"/>
+<pin name="GPIO33-B1" x="10.16" y="-25.4" length="middle" rot="R90"/>
+<pin name="UART1-RX(IO4)" x="12.7" y="-25.4" length="middle" rot="R90"/>
+<pin name="UART1-TX(IO2)" x="15.24" y="-25.4" length="middle" rot="R90"/>
+<pin name="I/OEXP.5" x="17.78" y="-25.4" length="middle" rot="R90"/>
+<pin name="GPIO19" x="20.32" y="-25.4" length="middle" rot="R90"/>
+<pin name="GPIO05" x="20.32" y="22.86" length="middle" rot="R270"/>
+<pin name="I/OEXP.7" x="17.78" y="22.86" length="middle" rot="R270"/>
+<pin name="GPIO27-B2" x="15.24" y="22.86" length="middle" rot="R270"/>
+<pin name="I2C-SDA" x="12.7" y="22.86" length="middle" rot="R270"/>
+<pin name="I2C-SCL" x="10.16" y="22.86" length="middle" rot="R270"/>
+<pin name="I/OEXP.6" x="7.62" y="22.86" length="middle" rot="R270"/>
+<pin name="NC" x="5.08" y="22.86" length="middle" direction="nc" rot="R270"/>
+<pin name="3.3V" x="33.02" y="2.54" length="middle" direction="pwr" rot="R180"/>
+<pin name="GND@17" x="33.02" y="0" length="middle" direction="pwr" rot="R180"/>
+<text x="1.27" y="10.16" size="1.27" layer="95" rot="R90">&gt;NAME</text>
+<text x="30.48" y="-20.32" size="1.27" layer="96" rot="R90">IntelMKR_ExpP2</text>
+</symbol>
+<symbol name="INTEL_MKR_LCD">
+<wire x1="-50.8" y1="17.78" x2="-50.8" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-50.8" y1="-7.62" x2="5.08" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="5.08" y1="-7.62" x2="5.08" y2="17.78" width="0.254" layer="94"/>
+<wire x1="5.08" y1="17.78" x2="-50.8" y2="17.78" width="0.254" layer="94"/>
+<text x="-33.02" y="5.08" size="1.778" layer="94">LCD-480X320</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="INTEL_MKR_EXP_P1">
+<gates>
+<gate name="G$1" symbol="INTEL_MKR_EXP_P1" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="INTEL_MKR_EXP_P1">
+<connects>
+<connect gate="G$1" pin="3.3V" pad="18"/>
+<connect gate="G$1" pin="5V@15" pad="15"/>
+<connect gate="G$1" pin="DAC1(IO25)" pad="11"/>
+<connect gate="G$1" pin="DAC2(IO26)" pad="12"/>
+<connect gate="G$1" pin="GND@1" pad="1"/>
+<connect gate="G$1" pin="GND@16" pad="16"/>
+<connect gate="G$1" pin="GND@17" pad="17"/>
+<connect gate="G$1" pin="GPI36" pad="8"/>
+<connect gate="G$1" pin="GPI39" pad="9"/>
+<connect gate="G$1" pin="HSPICLK(IO14)" pad="2"/>
+<connect gate="G$1" pin="HSPIMISO(IO12)" pad="3"/>
+<connect gate="G$1" pin="HSPIMOSI(IO13)" pad="4"/>
+<connect gate="G$1" pin="HSPISS(IO15)-T1" pad="5"/>
+<connect gate="G$1" pin="I/OEXP.2" pad="10"/>
+<connect gate="G$1" pin="I/OEXP.3" pad="13"/>
+<connect gate="G$1" pin="I/OEXP.4" pad="14"/>
+<connect gate="G$1" pin="UART2-RX(IO16)" pad="7"/>
+<connect gate="G$1" pin="UART2-TX(IO17)" pad="6"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="INTEL_MKR_EXP_P2">
+<gates>
+<gate name="G$1" symbol="INTEL_MKR_EXP_P2" x="-15.24" y="2.54"/>
+</gates>
+<devices>
+<device name="" package="INTEL_MKR_EXP_P2">
+<connects>
+<connect gate="G$1" pin="3.3V" pad="18"/>
+<connect gate="G$1" pin="5V@15" pad="15"/>
+<connect gate="G$1" pin="GND@1" pad="1"/>
+<connect gate="G$1" pin="GND@16" pad="16"/>
+<connect gate="G$1" pin="GND@17" pad="17"/>
+<connect gate="G$1" pin="GPIO05" pad="14"/>
+<connect gate="G$1" pin="GPIO19" pad="7"/>
+<connect gate="G$1" pin="GPIO27-B2" pad="12"/>
+<connect gate="G$1" pin="GPIO32-T2" pad="2"/>
+<connect gate="G$1" pin="GPIO33-B1" pad="3"/>
+<connect gate="G$1" pin="I/OEXP.5" pad="6"/>
+<connect gate="G$1" pin="I/OEXP.6" pad="9"/>
+<connect gate="G$1" pin="I/OEXP.7" pad="13"/>
+<connect gate="G$1" pin="I2C-SCL" pad="10"/>
+<connect gate="G$1" pin="I2C-SDA" pad="11"/>
+<connect gate="G$1" pin="NC" pad="8"/>
+<connect gate="G$1" pin="UART1-RX(IO4)" pad="4"/>
+<connect gate="G$1" pin="UART1-TX(IO2)" pad="5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="INTEL_LCD_FOOTPRINT">
+<gates>
+<gate name="G$1" symbol="INTEL_MKR_LCD" x="22.86" y="-5.08"/>
+</gates>
+<devices>
+<device name="" package="LCD_FOOTPRINT">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
+</drawing>
+<compatibility>
+<note version="8.5" severity="warning">
+Since Version 8.5, EAGLE supports locking for holes, vias, wires and polygons. 
+The locking property on all objects of these types will not be understood in this version. 
+</note>
+</compatibility>
+</eagle>
