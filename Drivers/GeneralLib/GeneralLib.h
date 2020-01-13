@@ -27,6 +27,10 @@ struct TouchAreaElement
 bool readTouchPannel(int * xPos, int * yPos, Adafruit_FT6206 * TS);
 bool readTouchPannel(TouchAreaElement * element, Adafruit_FT6206 * TS);
 
+void sound(unsigned short freq, unsigned short timeInMilliSec);
+void sound(unsigned short freq);
+void soundOff();
+
 int getInputFromTouchPannel(TouchAreaElement elementsArray[], unsigned int numOfElements, Adafruit_FT6206 * TS,unsigned int timeOutMs,bool * timeOut); // TimeOutMs = 0 => no time out
 
 class analogJoyStick

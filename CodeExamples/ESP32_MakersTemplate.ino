@@ -32,7 +32,6 @@ Adafruit_FT6206 ts = Adafruit_FT6206();
 	ILI9488SPI_8C lcd(480, 320);
 #endif
 
-void demo264Kcolors();
 void arcadeModeDemo();
 void touchPannelDemo(); // Set _264K_COLORS
 

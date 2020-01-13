@@ -134,3 +134,20 @@ bool analogJoyStick::updateDeadZoneVal(unsigned int deadZoneVal)
 	deadZone = deadZoneVal;
 		return true;
 }
+
+void sound(unsigned short freq, unsigned short timeInMilliSec)
+{
+	ledcWriteTone(0, freq);
+	delay(timeInMilliSec);
+	ledcWriteTone(0, 0);
+}
+
+void sound(unsigned short freq)
+{
+	ledcWriteTone(0, freq);
+}
+
+void soundOff()
+{
+	ledcWriteTone(0, 0);
+}
