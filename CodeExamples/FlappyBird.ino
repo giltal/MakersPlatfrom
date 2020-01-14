@@ -321,32 +321,11 @@ void game_start()
 	lcd.drawString("PRESS BUTTON to start",110, 180, 10);
 	lcd.flushFrameBuffer();
 
-	ledcWriteTone(0, 523);
-	delay(500);
-	ledcWriteTone(0, 587);
-	delay(500);
-	ledcWriteTone(0, 659);
-	delay(500);
-	ledcWriteTone(0, 698);
-	delay(500);
-	ledcWriteTone(0, 784);
-	delay(500);
-	ledcWriteTone(0, 880);
-	delay(500);
-	ledcWriteTone(0, 988);
-	delay(500);
-	ledcWriteTone(0, 1047);
-	delay(500);
+	sound(523, 500);
+	sound(587, 500);
+	sound(659, 500);
 
-	ledcWriteTone(0, 0);
-
-	while (1) 
-	{
-		// wait for push button
-		//if (digitalRead(MP_BUTTON_1) == LOW) 
-		if(TOUCH_PANNEL_TOUCHED())
-			break;
-	}
+	while (!TOUCH_PANNEL_TOUCHED());
 	// init game settings
 	game_init();
 }
@@ -387,5 +366,5 @@ void game_over()
 	lcd.setColor(0, 0, 1);
 	lcd.drawString("PRESS BUTTON", 70, 150, 25);
 	lcd.flushFrameBuffer();
-	while (digitalRead(MP_BUTTON_1) == HIGH);
+	while (digitalRead(MP_BUTTON_1) == HIGH || !TOUCH_PANNEL_TOUCHED());
 }
