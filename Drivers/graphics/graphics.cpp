@@ -6,9 +6,8 @@
 /*
  General graphics lib to be inherited
 */
-graphics::graphics(short maxX, short maxY, orientation ori)
+graphics::graphics(short maxX, short maxY)
 {	
-	_orien = ori;
 	this->maxX = maxX;
 	this->maxY = maxY;
 }
@@ -26,21 +25,10 @@ void graphics::drawRect(short x1, short y1, short x2, short y2, bool fill)
 
 	if (fill)
 	{
-		if (_orien == PORTRAIT)
+		for (int i = 0; i < ((y2 - y1) / 2) + 1; i++)
 		{
-			for (int i = 0; i < ((y2 - y1) / 2) + 1; i++)
-			{
-				drawHLine(x1, y1 + i, x2 - x1);
-				drawHLine(x1, y2 - i, x2 - x1);
-			}
-		}
-		else
-		{
-			for (int i = 0; i < ((x2 - x1) / 2) + 1; i++)
-			{
-				drawVLine(x1 + i, y1, y2 - y1);
-				drawVLine(x2 - i, y1, y2 - y1);
-			}
+			drawHLine(x1, y1 + i, x2 - x1);
+			drawHLine(x1, y2 - i, x2 - x1);
 		}
 	}
 	else
@@ -715,15 +703,6 @@ void ILI9488SPI_BASE::_init(unsigned char sck, unsigned char miso, unsigned char
 
 void ILI9488SPI_BASE::setXY(short x1, short y1, short x2, short y2)
 {
-	/*if (_orien == landscape)
-	{
-		swap(&x1, &y1);
-		swap(&x2, &y2);
-		y1 = maxY - y1;
-		y2 = maxY - y2;
-		swap(&y1, &y2);
-	}*/
-
 	int ex = x2 | (x1 << 16);
 	int ey = y2 | (y1 << 16);
 
@@ -736,11 +715,6 @@ void ILI9488SPI_BASE::setXY(short x1, short y1, short x2, short y2)
 
 void ILI9488SPI_BASE::setXY(short x, short y)
 {
-	/*if (_orien == LANDSCAPE)
-	{
-		swap(&x, &y);
-		y = maxY - y;
-	}*/
 	int ex = x | (x << 16);
 	int ey = y | (y << 16);
 	ILI9488SPI_LCD_WRITE_COM(0x2a);
@@ -765,11 +739,7 @@ void ILI9488SPI_264KC::fillScr(char r, char g, char b)
 {
 	unsigned int color = ((unsigned int)b << 16) | ((unsigned int)g << 8) | (unsigned int)r;
 
-	if (_orien == PORTRAIT)
-		setXY(0, 0, maxX, maxY);
-	else
-		setXY(0, 0, maxY, maxX);
-
+	setXY(0, 0, maxX, maxY);
 	SPI.writeRGB(color, maxX * maxY);
 }
 
@@ -1032,11 +1002,7 @@ void ILI9488SPI_8C::fillScr(char r, char g, char b)
 
 void ILI9488SPI_8C::flushFrameBuffer()
 {
-	if (_orien == PORTRAIT)
-		setXY(0, 0, maxX, maxY);
-	else
-		setXY(0, 0, maxY, maxX);
-
+	setXY(0, 0, maxX, maxY);
 	SPI.writeBuffer((unsigned int *)frameBuffers[currentFrameBufferIndex], ILI9488_8C_FRAME_BUFFER_SIZE / 4);
 }
 

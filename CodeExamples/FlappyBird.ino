@@ -17,7 +17,7 @@
 
 PCF8574 pcf8574(0x39);
 Adafruit_FT6206 ts = Adafruit_FT6206();
-ILI9488SPI_8C lcd(480, 320, portrait);
+ILI9488SPI_8C lcd(480, 320);
 
 #define SPEAKER_PIN 5
 #define MP_BUTTON_1	27
@@ -68,7 +68,7 @@ ILI9488SPI_8C lcd(480, 320, portrait);
 // bird sprite
 // bird sprite colors (Cx name for values to keep the array readable)
 
-const unsigned char FlappyBird[] = 
+const unsigned char FlappyBird[] =
 {
 0x00,0x28,0x00,0x28,
 0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x99,0x90,0x00,
@@ -148,7 +148,7 @@ static short tmpx, tmpy;
 BIRD bird;
 PIPEF pipef;
 
-void setup() 
+void setup()
 {
 	pinMode(34, INPUT);
 	pinMode(36, ANALOG);
@@ -183,7 +183,7 @@ void setup()
 // ---------------
 // main loop
 // ---------------
-void loop() 
+void loop()
 {
 	game_start();
 	game_loop();
@@ -193,7 +193,7 @@ void loop()
 // ---------------
 // game loop
 // ---------------
-void game_loop() 
+void game_loop()
 {
 	char tempStr[10];
 	float speed = 2.0;
@@ -209,10 +209,10 @@ void game_loop()
 	// passed pipef flag to count score
 	bool passed_pipe = false;
 	pipef.gap_y = random(10, GAMEH - (10 + GAPHEIGHT));
-	while (1) 
+	while (1)
 	{
 		lcd.fillScr(BCKGRDCOL);
-		
+
 		lcd.setColor(0, 0, 0);
 		lcd.drawHLine(0, GAMEH, TFTW);
 		lcd.setColor(0, 0, 0);
@@ -247,26 +247,26 @@ void game_loop()
 		// ---------------
 		pipef.x -= speed;
 		// if pipef reached edge of the screen reset its position and gap
-		if (pipef.x < 0) 
+		if (pipef.x < 0)
 		{
 			pipef.x = TFTW - PIPEW;
 			pipef.gap_y = random(10, GAMEH - (10 + GAPHEIGHT));
 		}
-		
+
 		// ===============
 		// draw
 		// ===============
 		// pipef
 		// ---------------
 		// we save cycles if we avoid drawing the pipef when outside the screen
-		if (pipef.x >= 0 && pipef.x < TFTW) 
+		if (pipef.x >= 0 && pipef.x < TFTW)
 		{
 			// pipef color
 			lcd.setColor(PIPECOL);
 			lcd.drawRect(pipef.x, 0, pipef.x + PIPEW, pipef.gap_y, true);
 			lcd.drawRect(pipef.x, pipef.gap_y + GAPHEIGHT + 1, pipef.x + PIPEW, GAMEH, true);
 		}
-		
+
 		// bird
 		lcd.drawBitmap(bird.x, bird.y, FlappyBird, true);
 		// save position to erase bird on next draw
@@ -277,20 +277,20 @@ void game_loop()
 		// collision
 		// ===============
 		// if the bird hit the ground game over
-		if (bird.y > (GAMEH - BIRDH)) 
+		if (bird.y > (GAMEH - BIRDH))
 			break;
 		// checking for bird collision with pipef
 		//if ((bird.x + BIRDW) >= (pipef.x - BIRDW2) && bird.x <= (pipef.x + PIPEW - BIRDW)) 
 		if ((bird.x + BIRDW) >= (pipef.x) && bird.x <= (pipef.x + PIPEW))
 		{
 			// bird entered a pipef, check for collision
-			if (bird.y < pipef.gap_y || (bird.y + BIRDH) > (pipef.gap_y + GAPHEIGHT)) 
+			if (bird.y < pipef.gap_y || (bird.y + BIRDH) >(pipef.gap_y + GAPHEIGHT))
 				break;
-			else 
+			else
 				passed_pipe = true;
 		}
 		// if bird has passed the pipef increase score
-		else if (bird.x > pipef.x + PIPEW - BIRDW && passed_pipe) 
+		else if (bird.x > pipef.x + PIPEW - BIRDW && passed_pipe)
 		{
 			passed_pipe = false;
 			score++;
@@ -310,15 +310,15 @@ void game_loop()
 // ---------------
 // game start
 // ---------------
-void game_start() 
+void game_start()
 {
 	lcd.fillScr(0, 0, 0);
 	lcd.setColor(1, 1, 1);
 	lcd.drawBitmap(50, 150, FlappyBird, true);
 	lcd.drawBitmap(370, 150, FlappyBird, true);
 
-	lcd.drawString("FLAPPY BIRD",100, 150, 20);
-	lcd.drawString("PRESS BUTTON to start",110, 180, 10);
+	lcd.drawString("FLAPPY BIRD", 100, 150, 20);
+	lcd.drawString("PRESS BUTTON to start", 110, 180, 10);
 	lcd.flushFrameBuffer();
 
 	sound(523, 500);
@@ -333,7 +333,7 @@ void game_start()
 // ---------------
 // game init
 // ---------------
-void game_init() 
+void game_init()
 {
 	// clear screen
 	//TFT.fillScreen(BCKGRDCOL);
@@ -354,7 +354,7 @@ void game_init()
 // ---------------
 // game over
 // ---------------
-void game_over() 
+void game_over()
 {
 	char tempStr[50];
 	lcd.fillScr(0, 0, 0);
@@ -366,5 +366,5 @@ void game_over()
 	lcd.setColor(0, 0, 1);
 	lcd.drawString("PRESS BUTTON", 70, 150, 25);
 	lcd.flushFrameBuffer();
-	while (digitalRead(MP_BUTTON_1) == HIGH || !TOUCH_PANNEL_TOUCHED());
+	while (digitalRead(MP_BUTTON_1) == HIGH && !TOUCH_PANNEL_TOUCHED());
 }

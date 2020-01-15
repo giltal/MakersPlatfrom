@@ -5,24 +5,17 @@
 #ifndef GRAPHICS_h
 #define GRAPHICS_h
 
-#define PORTRAIT 0
-#define LANDSCAPE 1 
-
-typedef enum { portrait = PORTRAIT, landscape = LANDSCAPE }
-	orientation;
-
 class graphics
 {
 	protected:
 		unsigned char	fgColor[3], bgColor[3];
 		int				_fgColor, _bgColor;
 		short			maxX, maxY;
-		orientation		_orien;
 
 		void	swap(short * a, short * b);
 
 	public:
-		graphics(short maxX, short maxY, orientation ori);
+		graphics(short maxX, short maxY);
 		~graphics() {};
 		
 		virtual void drawPixel(short x, short y) = 0;
@@ -44,7 +37,6 @@ class graphics
 		int		getYSize() { return maxY; }
 };
 
-// For performance
 
 #define DRAW_PIXEL(x,y)\
 	drawPixel(x,y)
@@ -122,14 +114,14 @@ protected:
 	void setXY(short x, short y);
 
 public:
-	ILI9488SPI_BASE(short maxX, short maxY, orientation ori) : graphics(maxX, maxY, ori) {};
+	ILI9488SPI_BASE(short maxX, short maxY) : graphics(maxX, maxY) {};
 	~ILI9488SPI_BASE() {};
 };
 
 class ILI9488SPI_264KC : public ILI9488SPI_BASE
 {
 public:
-	ILI9488SPI_264KC(short maxX, short maxY, orientation ori) : ILI9488SPI_BASE(maxX, maxY, ori) {};
+	ILI9488SPI_264KC(short maxX, short maxY) : ILI9488SPI_BASE(maxX, maxY) {};
 	~ILI9488SPI_264KC() {};
 	void init(unsigned char sck = 18, unsigned char miso = 19, unsigned char mosi = 23, unsigned char ss = 5, unsigned int freq = 40000000L);
 	inline void drawPixel(short x, short y);
@@ -159,7 +151,7 @@ private:
 	bool FGbitOn;
 
 public:
-	ILI9488SPI_8C(short maxX, short maxY, orientation ori) : ILI9488SPI_BASE(maxX, maxY, ori) {};
+	ILI9488SPI_8C(short maxX, short maxY) : ILI9488SPI_BASE(maxX, maxY) {};
 	~ILI9488SPI_8C() {};
 	bool init(unsigned char sck = 18, unsigned char miso = 19, unsigned char mosi = 23, unsigned char ss = 5, unsigned int freq = 40000000L, ili9488_8C_mode mode = singleFrameBuffer);
 	void setColor(char r, char g, char b);
