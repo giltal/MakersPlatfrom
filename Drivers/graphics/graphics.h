@@ -131,7 +131,8 @@ public:
 	void drawRect(short x1, short y1, short x2, short y2, bool fill = false);
 	void drawCompressed24bitBitmap(short x, short y, const unsigned int * dataArray);
 	void drawCompressedGrayScaleBitmap(short x, short y, const unsigned short * dataArray, bool invert = false);
-	void drawHebStringUTF8(short x, short y, const char * str);
+	void drawHebStringUTF8(short x, short y, const char * str, bool swapString = false);
+	int	 getStringWidth(const char * str);
 	void testFunc();
 };
 
