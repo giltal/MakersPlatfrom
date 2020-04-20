@@ -50,12 +50,10 @@ class graphics
 #include "PCF8574.h"
 extern PCF8574 pcf8574;
 
-#define GPIO_W1T_SET(data) (*((volatile unsigned int *)(((unsigned int)(0x3FF44008)))) = data)
-#define GPIO_W1T_CLEAR(data) (*((volatile unsigned int *)(((unsigned int)(0x3FF4400c)))) = data)
-
 #define ILI9488SPI_COMMAND	0
 #define ILI9488SPI_DATA		1
-#define ILI9488SPI_DATA_COMMAND_PIN	0
+/* 0 for maker's platform , 32 for Smart Home board*/
+#define ILI9488SPI_DATA_COMMAND_PIN	0 
 
 #define ILI9488SPI_SELECT_DATA_COMM(X) digitalWrite(ILI9488SPI_DATA_COMMAND_PIN, X);
 
@@ -82,22 +80,26 @@ extern PCF8574 pcf8574;
 
 #define ILI9488SPI_DEASSERT_CS()\
 			pcf8574.digitalWrite(P0, HIGH);
-#if 0
-#define ILI9488SPI_LCD_WRITE_COM(VAL)\
-			ILI9488SPI_SELECT_DATA_COMM(ILI9488SPI_COMMAND);\
-			ILI9488SPI_LCD_WRITE_DATA8((char)VAL);\
-			ILI9488SPI_SELECT_DATA_COMM(ILI9488SPI_DATA);
-#endif
-#define ILI9488SPI_LCD_WRITE_COM(VAL)\
-			GPIO_W1T_CLEAR(0x1);\
-			ILI9488SPI_LCD_WRITE_DATA8((char)VAL);\
-			GPIO_W1T_SET(0x1);
 
 #define ILI9488SPI_LCD_WRITE_DATA8(VAL)\
 			SPI.writeBYTE((char)VAL);
 
 #define	ILI9488SPI_LCD_WRITE_DATA(X)\
 			SPI.writeRGB(X);
+
+#if 1
+#define ILI9488SPI_LCD_WRITE_COM(VAL)\
+			ILI9488SPI_SELECT_DATA_COMM(ILI9488SPI_COMMAND);\
+			ILI9488SPI_LCD_WRITE_DATA8((char)VAL);\
+			ILI9488SPI_SELECT_DATA_COMM(ILI9488SPI_DATA);
+#else
+#define GPIO_W1T_SET(data) (*((volatile unsigned int *)(((unsigned int)(0x3FF44008)))) = data)
+#define GPIO_W1T_CLEAR(data) (*((volatile unsigned int *)(((unsigned int)(0x3FF4400c)))) = data)
+#define ILI9488SPI_LCD_WRITE_COM(VAL)\
+			GPIO_W1T_CLEAR(0x1);\
+			ILI9488SPI_LCD_WRITE_DATA8((char)VAL);\
+			GPIO_W1T_SET(0x1);
+#endif
 
 
 #define ILI9488_8COLORS		0
@@ -109,13 +111,15 @@ typedef enum { rgb111 = ILI9488_8COLORS, rgb666 = ILI9488_264KCOLORS }
 class ILI9488SPI_BASE : public graphics
 {
 protected:
-	void _init(unsigned char sck = 18, unsigned char miso = 19, unsigned char mosi = 23, unsigned char ss = 5, unsigned int freq = 40000000L, ili9488_mode mode = rgb666);
-	void setXY(short x1, short y1, short x2, short y2);
-	void setXY(short x, short y);
+	void _init(unsigned char sck = 18, unsigned char miso = 19, unsigned char mosi = 23, 
+			   unsigned char ss = 5, unsigned int freq = 40000000L, ili9488_mode mode = rgb666);
 
 public:
 	ILI9488SPI_BASE(short maxX, short maxY) : graphics(maxX, maxY) {};
 	~ILI9488SPI_BASE() {};
+
+	void setXY(short x1, short y1, short x2, short y2);
+	void setXY(short x, short y);
 };
 
 class ILI9488SPI_264KC : public ILI9488SPI_BASE
@@ -131,7 +135,7 @@ public:
 	void drawRect(short x1, short y1, short x2, short y2, bool fill = false);
 	void drawCompressed24bitBitmap(short x, short y, const unsigned int * dataArray);
 	void drawCompressedGrayScaleBitmap(short x, short y, const unsigned short * dataArray, bool invert = false);
-	void drawHebStringUTF8(short x, short y, const char * str, bool swapString = false);
+	void drawHebStringUTF8(short x, short y, const char * str, bool swapString, bool invert = false);
 	int	 getStringWidth(const char * str);
 	void testFunc();
 };
@@ -162,6 +166,7 @@ public:
 
 	inline void drawPixel(short x, short y);
 	inline void drawPixel(short x, short y, unsigned char color);
+	void draw2Pixels(short x, short y, unsigned char color);
 	inline bool isFGbitSet(short x, short y);
 	void fillScr(char r, char g, char b);
 	void drawHLine(short x, short y, int l);

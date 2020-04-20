@@ -847,7 +847,7 @@ extern unsigned short apostrophesCF[], periodCF[], minusCF[], tagCF[], colonCF[]
 #define SPACE_SIZE		10
 #define HEBREW_CHAR_SET	215
 
-void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, bool swapString)
+void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, bool swapString, bool invert)
 {
 	// Heb Strings are swapped //
 	char *	tempStr;
@@ -928,7 +928,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 					tempY = y - 9;
 				else
 					tempY = y;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			i++; // Un-supported UTF8 char
@@ -940,7 +940,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = numberCharSet[tempStr[i] - 48];
 				tempX = xIndex;// -currentChar[0];
 				tempY = y;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			if (tempStr[i] == 32 /* space */)
@@ -951,7 +951,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = apostrophesCF;
 				tempX = xIndex;// -currentChar[0];
 				tempY = y - 3;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			if (tempStr[i] == 45)
@@ -960,7 +960,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = minusCF;
 				tempX = xIndex;// -currentChar[0];
 				tempY = y + 11;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			if (tempStr[i] == 46)
@@ -969,7 +969,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = periodCF;
 				tempX = xIndex;// -currentChar[0];
 				tempY = y + 19;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			if (tempStr[i] == 39)
@@ -978,7 +978,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = tagCF;
 				tempX = xIndex;// -currentChar[0];
 				tempY = y - 3;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			if (tempStr[i] == 58)
@@ -987,7 +987,7 @@ void ILI9488SPI_264KC::drawHebStringUTF8(short x, short y, const char * str, boo
 				currentChar = colonCF;
 				tempX = xIndex;// -currentChar[0];
 				tempY = y + 3;
-				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar);
+				drawCompressedGrayScaleBitmap(tempX, tempY, currentChar,invert);
 				xIndex += (currentChar[0] + 1);
 			}
 			i++;
@@ -1213,6 +1213,12 @@ inline void ILI9488SPI_8C::drawPixel(short x, short y, unsigned char color)
 		}
 	}
 
+}
+
+void ILI9488SPI_8C::draw2Pixels(short x, short y, unsigned char color)
+{
+	unsigned int index = (y*maxX + x) >> 1;
+	frameBuffers[currentFrameBufferIndex][index] = color;
 }
 
 void ILI9488SPI_8C::drawHLine(short x, short y, int l)
