@@ -1,7 +1,6 @@
 #include <GeneralLib.h>
 #include <Adafruit_FT6206.h>
 
-
 bool readTouchPannel(int * xPos, int * yPos, Adafruit_FT6206 * TS)
 {
 	TS_Point p;
@@ -133,21 +132,4 @@ bool analogJoyStick::updateDeadZoneVal(unsigned int deadZoneVal)
 		return false;
 	deadZone = deadZoneVal;
 		return true;
-}
-
-void sound(unsigned short freq, unsigned short timeInMilliSec)
-{
-	ledcWriteTone(0, freq);
-	delay(timeInMilliSec);
-	ledcWriteTone(0, 0);
-}
-
-void sound(unsigned short freq)
-{
-	ledcWriteTone(0, freq);
-}
-
-void soundOff()
-{
-	ledcWriteTone(0, 0);
 }

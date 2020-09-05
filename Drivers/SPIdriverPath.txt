@@ -1,1 +1,1 @@
-C:\Users\giltal\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.1\libraries\SPI\src
+C:\Users\giltal\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.4\libraries\SPI\src
