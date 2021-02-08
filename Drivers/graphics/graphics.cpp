@@ -440,42 +440,46 @@ short graphics::getPrintWidth(char * string)
 
 //////////////////////// ILI9488 9 bit parallel class /////////////////////////////////
 
+// IO 0 is D/C
+// IO 2 is WR/CLK
 #define ILI9488P_WR_CMD(X)\
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF024);\ 
-		ESP_WRITE_REG(0x3FF44008, (0x000FF000 & ((int)X << 12)) | 0x20);\
-		ESP_WRITE_REG(0x3FF44008, 0x4); 
+		ESP_WRITE_REG(0x3FF4400c, 0x000CF035);\ 
+		ESP_WRITE_REG(0x3FF44008, (0x000C0000 & ((int)(X) << 12)) | (0x0000F000 & ((int)(X) << 10)) | (0x00000030 & ((int)(X) << 4)) | 0x4);\
+		ESP_WRITE_REG(0x3FF44008, 0x1); 
 
 #define ILI9488P_WR_DATA8(X)\
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);\ 
-		ESP_WRITE_REG(0x3FF44008, (0x000FF000 & ((int)X << 12)));\
-		ESP_WRITE_REG(0x3FF44008, 0x20); 
+		ESP_WRITE_REG(0x3FF4400c, 0x000CF034);\ 
+		ESP_WRITE_REG(0x3FF44008, (0x000C0000 & ((int)(X) << 12)) | (0x0000F000 & ((int)(X) << 10)) | (0x00000030 & ((int)(X) << 4)));\
+		ESP_WRITE_REG(0x3FF44008, 0x04); 
 
 #define ILI9488_RESET_IO	32
 
-void ILI9488_9BIT_PARALLEL::init(ILI9488P_SETUP * ili9488setup)
+void ILI9488_9BIT_PARALLEL::init(bool _9bit)
 {
+	pinMode(0, OUTPUT); // D/C
+	pinMode(2, OUTPUT); // WR/CLK
 	// Data 0-7
-	pinMode(12, OUTPUT);// D0
-	pinMode(13, OUTPUT);
-	pinMode(14, OUTPUT);
-	pinMode(15, OUTPUT);
-	pinMode(16, OUTPUT);
-	pinMode(17, OUTPUT);
-	pinMode(18, OUTPUT);
-	pinMode(19, OUTPUT);
-	pinMode(4, OUTPUT); // D8
-	// Reset
-	pinMode(ILI9488_RESET_IO, OUTPUT);
-	// WR
-	pinMode(5, OUTPUT);
-	digitalWrite(5, HIGH);
-	// D_C
-	pinMode(2, OUTPUT);
-	
-	// Reset the LCD
-	digitalWrite(ILI9488_RESET_IO, LOW);
-	delay(100);
-	digitalWrite(ILI9488_RESET_IO, HIGH);
+	pinMode(4, OUTPUT); // D0
+	pinMode(5, OUTPUT); // 1
+	pinMode(12, OUTPUT);// 2
+	pinMode(13, OUTPUT);// 3
+	pinMode(14, OUTPUT);// 4
+	pinMode(15, OUTPUT);// 5
+	pinMode(18, OUTPUT);// 6
+	pinMode(19, OUTPUT);// 7
+	if (_9bit)
+	{
+		pinMode(25, OUTPUT); // D8
+		_9bitFlag = true;
+	}
+	else
+	{
+		_9bitFlag = false;
+	}
+
+	ILI9488SPI_PRE_INIT();
+	ILI9488SPI_RESET();
+	ILI9488SPI_ASSERT_CS();
 
 	ILI9488P_WR_CMD(0xE0);
 	ILI9488P_WR_DATA8(0x00);
@@ -529,8 +533,14 @@ void ILI9488_9BIT_PARALLEL::init(ILI9488P_SETUP * ili9488setup)
 	ILI9488P_WR_DATA8(0b11101010);
 
 	ILI9488P_WR_CMD(0x3A);      // Interface Pixel Format
-	ILI9488P_WR_DATA8(0x66); 	  // 0x66 = 18 bits (3 bytes per pixel), 0x55 = 16 bits  
-
+	if (_9bit)
+	{
+		ILI9488P_WR_DATA8(0x66); 	  // 0x66 = 18 bits (3 bytes per pixel), 0x55 = 16 bits
+	}
+	else
+	{
+		ILI9488P_WR_DATA8(0x55); 	  // 0x66 = 18 bits (3 bytes per pixel), 0x55 = 16 bits  
+	}
 	ILI9488P_WR_CMD(0XB0);      // Interface Mode Control
 	ILI9488P_WR_DATA8(0x80);     //SDO NOT USE
 
@@ -562,23 +572,32 @@ void ILI9488_9BIT_PARALLEL::init(ILI9488P_SETUP * ili9488setup)
 void ILI9488_9BIT_PARALLEL::setXY(short x1, short y1, short x2, short y2)
 {
 	ILI9488P_WR_CMD(0x2a);
-	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
+	/*ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((x1 >> 8) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((x1) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((x2 >> 8) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
-	ESP_WRITE_REG(0x3FF44008, (((x2) << 12) & 0x000ff000) | 0x20);
+	ESP_WRITE_REG(0x3FF44008, (((x2) << 12) & 0x000ff000) | 0x20);*/
+	ILI9488P_WR_DATA8(x1 >> 8);
+	ILI9488P_WR_DATA8(x1);
+	ILI9488P_WR_DATA8(x2 >> 8);
+	ILI9488P_WR_DATA8(x2);
 	ILI9488P_WR_CMD(0x2b);
-	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
+	/*ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((y1 >> 8) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((y1) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 	ESP_WRITE_REG(0x3FF44008, (((y2 >> 8) << 12) & 0x000ff000) | 0x20);
 	ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
-	ESP_WRITE_REG(0x3FF44008, (((y2) << 12) & 0x000ff000) | 0x20);
+	ESP_WRITE_REG(0x3FF44008, (((y2) << 12) & 0x000ff000) | 0x20);*/
+	ILI9488P_WR_DATA8(y1 >> 8);
+	ILI9488P_WR_DATA8(y1);
+	ILI9488P_WR_DATA8(y2 >> 8);
+	ILI9488P_WR_DATA8(y2);
+	ILI9488P_WR_CMD(0x2b);
 	ILI9488P_WR_CMD(0x2c);
 }
 
@@ -588,18 +607,23 @@ void ILI9488_9BIT_PARALLEL::setXY(short x, short y)
 	if (lastX != x)
 	{
 		ILI9488P_WR_CMD(0x2a);
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
+		/*ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 		ESP_WRITE_REG(0x3FF44008, (((x >> 8) << 12) & 0x000ff000) | 0x20);
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 		ESP_WRITE_REG(0x3FF44008, (((x) << 12) & 0x000ff000) | 0x20);
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 		ESP_WRITE_REG(0x3FF44008, (((x >> 8) << 12) & 0x000ff000) | 0x20);
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
-		ESP_WRITE_REG(0x3FF44008, (((x) << 12) & 0x000ff000) | 0x20);
+		ESP_WRITE_REG(0x3FF44008, (((x) << 12) & 0x000ff000) | 0x20);*/
+		ILI9488P_WR_DATA8(x >> 8);
+		ILI9488P_WR_DATA8(x);
+		ILI9488P_WR_DATA8(x >> 8);
+		ILI9488P_WR_DATA8(x);
 	}
 	if (lastY != y)
 	{
 		ILI9488P_WR_CMD(0x2b);
+		/*
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 		ESP_WRITE_REG(0x3FF44008, (((y >> 8) << 12) & 0x000ff000) | 0x20);
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
@@ -607,7 +631,11 @@ void ILI9488_9BIT_PARALLEL::setXY(short x, short y)
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
 		ESP_WRITE_REG(0x3FF44008, (((y >> 8) << 12) & 0x000ff000) | 0x20);
 		ESP_WRITE_REG(0x3FF4400c, 0x000FF020);
-		ESP_WRITE_REG(0x3FF44008, (((y) << 12) & 0x000ff000) | 0x20);
+		ESP_WRITE_REG(0x3FF44008, (((y) << 12) & 0x000ff000) | 0x20);*/
+		ILI9488P_WR_DATA8(y >> 8);
+		ILI9488P_WR_DATA8(y);
+		ILI9488P_WR_DATA8(y >> 8);
+		ILI9488P_WR_DATA8(y);
 	}
 	ILI9488P_WR_CMD(0x2c);
 	lastX = x;
@@ -617,40 +645,52 @@ void ILI9488_9BIT_PARALLEL::setXY(short x, short y)
 void ILI9488_9BIT_PARALLEL::drawPixel(short x, short y)
 {
 	setXY(x, y);
-	ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+	ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 	ESP_WRITE_REG(0x3FF44008, bCh);
-	ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+	ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 	ESP_WRITE_REG(0x3FF44008, bCl);
 }
 
-void ILI9488_9BIT_PARALLEL::fillScr(unsigned char r, unsigned char g,unsigned char b)
+void ILI9488_9BIT_PARALLEL::fillScr(unsigned char r, unsigned char g, unsigned char b)
 {
 	setXY(0, 0, 479, 319);
+
 	unsigned int bch, bcl;
-	unsigned int i;
+	unsigned int i, colorH, colorL;
 
-	bcl = (((b >> 2) | ((g << 4) & 0xC0)) << 12) | 0x20 | (g & 0x10);
-	bch = (((g >> 5) | ((r << 1) & 0xf8)) << 12) | 0x20 | (((r & 0x80) == 0x80) << 4);
-
+	if (_9bitFlag)
+	{
+		colorH = GET_RGB666_H(r, g, b);
+		colorL = GET_RGB666_L(r, g, b);
+		bcl = ILI9488P_MAP_9BIT(colorL);
+		bch = ILI9488P_MAP_9BIT(colorH);
+	}
+	else
+	{
+		colorH = GET_RGB565_H(r, g, b);
+		colorL = GET_RGB565_L(r, g, b);
+		bcl = ILI9488P_MAP_8BIT(colorL);
+		bch = ILI9488P_MAP_8BIT(colorH);
+	}
 
 	if (bch == bcl)
 	{
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF010);
-		ESP_WRITE_REG(0x3FF44008, bcl & 0x000FF010);
+		ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
+		ESP_WRITE_REG(0x3FF44008, bcl);
 
 		for (i = 0; i < 480 * 320 * 2; i++)
 		{
-			ESP_WRITE_REG(0x3FF4400c, 0x20);
-			ESP_WRITE_REG(0x3FF44008, 0x20);
+			ESP_WRITE_REG(0x3FF4400c, 0x04);
+			ESP_WRITE_REG(0x3FF44008, 0x04);
 		}
 	}
 	else
 	{
 		for (i = 0; i < 480 * 320; i++)
 		{
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 			ESP_WRITE_REG(0x3FF44008, bch);
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 			ESP_WRITE_REG(0x3FF44008, bcl);
 		}
 	}
@@ -670,6 +710,7 @@ void ILI9488_9BIT_PARALLEL::drawCompressed24bitBitmap(short x, short y, const un
 	index++;
 
 	unsigned int dataArraySize = hight * width, i, j, counter = 0,colorL, colorH;
+	unsigned int bch, bcl;
 	unsigned char copies,r,g,b;
 
 	setXY(x, y, x + width - 1, y + hight - 1);
@@ -680,14 +721,27 @@ void ILI9488_9BIT_PARALLEL::drawCompressed24bitBitmap(short x, short y, const un
 		r = (dataArray[index] & 0x000000ff);
 		copies = (dataArray[index] >> 24);
 		index++;
-		colorL = (((b >> 2) | ((g << 4) & 0xC0)) << 12) | 0x20 | (g & 0x10);
-		colorH = (((g >> 5) | ((r << 1) & 0xf8)) << 12) | 0x20 | (((r & 0x80) == 0x80) << 4);
+		if (_9bitFlag)
+		{
+			colorL = GET_RGB666_L(r, g, b);
+			bcl = ILI9488P_MAP_9BIT(colorL);
+			colorH = GET_RGB666_H(r, g, b);
+			bch = ILI9488P_MAP_9BIT(colorH);
+		}
+		else
+		{
+			colorH = GET_RGB565_H(r, g, b);
+			colorL = GET_RGB565_L(r, g, b);
+			bcl = ILI9488P_MAP_8BIT(colorL);
+			bch = ILI9488P_MAP_8BIT(colorH);
+		}
+
 		for (size_t j = 0; j < copies; j++)
 		{
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
-			ESP_WRITE_REG(0x3FF44008, colorH);
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
-			ESP_WRITE_REG(0x3FF44008, colorL);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
+			ESP_WRITE_REG(0x3FF44008, bch);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
+			ESP_WRITE_REG(0x3FF44008, bcl);
 		}
 		counter += copies;
 	}
@@ -698,6 +752,7 @@ void ILI9488_9BIT_PARALLEL::drawCompressedGrayScaleBitmap(short x, short y, cons
 	unsigned int hight = dataArray[0], width = dataArray[1];
 	unsigned int dataArraySize = hight * width, i, j, counter = 0, colorL, colorH;
 	unsigned char copies, c;
+	unsigned int bch, bcl;
 
 	setXY(x, y, x + hight - 1, y + width - 1);
 	for (i = 2 ; counter < dataArraySize; i++)
@@ -711,23 +766,49 @@ void ILI9488_9BIT_PARALLEL::drawCompressedGrayScaleBitmap(short x, short y, cons
 		{
 			c = dataArray[i];
 		}
-		colorL = (((c >> 2) | ((c << 4) & 0xC0)) << 12) | 0x20 | (c & 0x10);
-		colorH = (((c >> 5) | ((c << 1) & 0xf8)) << 12) | 0x20 | (((c & 0x80) == 0x80) << 4);
+		if (_9bitFlag)
+		{
+			colorL = GET_RGB666_L(c, c, c);
+			bcl = ILI9488P_MAP_9BIT(colorL);
+			colorH = GET_RGB666_H(c, c, c);
+			bch = ILI9488P_MAP_9BIT(colorH);
+		}
+		else
+		{
+			colorH = GET_RGB565_H(c, c, c);
+			colorL = GET_RGB565_L(c, c, c);
+			bcl = ILI9488P_MAP_8BIT(colorL);
+			bch = ILI9488P_MAP_8BIT(colorH);
+		}
+
 		for (size_t j = 0; j < copies; j++)
 		{
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
-			ESP_WRITE_REG(0x3FF44008, colorH);
-			ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
-			ESP_WRITE_REG(0x3FF44008, colorL);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
+			ESP_WRITE_REG(0x3FF44008, bch);
+			ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
+			ESP_WRITE_REG(0x3FF44008, bcl);
 		}
 		counter += copies;
 	}
 }
 
-void ILI9488_9BIT_PARALLEL::setColor(unsigned char r, unsigned char g,unsigned char b)
+void ILI9488_9BIT_PARALLEL::setColor(unsigned char r, unsigned char g, unsigned char b)
 {
-	bCl = (((b >> 2) | ((g << 4) & 0xC0)) << 12) | 0x20 | (g & 0x10);
-	bCh = (((g >> 5) | ((r << 1) & 0xf8)) << 12) | 0x20 | (((r & 0x80) == 0x80) << 4);
+	unsigned int colorL, colorH;
+	if (_9bitFlag)
+	{
+		colorH = GET_RGB666_H(r, g, b);
+		colorL = GET_RGB666_L(r, g, b);
+		bCl = ILI9488P_MAP_9BIT(colorL);
+		bCh = ILI9488P_MAP_9BIT(colorH);
+	}
+	else
+	{
+		colorH = GET_RGB565_H(r, g, b);
+		colorL = GET_RGB565_L(r, g, b);
+		bCl = ILI9488P_MAP_8BIT(colorL);
+		bCh = ILI9488P_MAP_8BIT(colorH);
+	}
 }
 
 void ILI9488_9BIT_PARALLEL::drawHLine(short x, short y, int l)
@@ -740,9 +821,9 @@ void ILI9488_9BIT_PARALLEL::drawHLine(short x, short y, int l)
 	setXY(x, y, x + l, y);
 	for (size_t i = 0; i < l; i++)
 	{
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+		ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 		ESP_WRITE_REG(0x3FF44008, bCh);
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+		ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 		ESP_WRITE_REG(0x3FF44008, bCl);
 	}
 }
@@ -757,18 +838,220 @@ void ILI9488_9BIT_PARALLEL::drawVLine(short x, short y, int l)
 	setXY(x, y, x, y + l);
 	for (size_t i = 0; i < l; i++)
 	{
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+		ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 		ESP_WRITE_REG(0x3FF44008, bCh);
-		ESP_WRITE_REG(0x3FF4400c, 0x000FF030);
+		ESP_WRITE_REG(0x3FF4400c, PAR_IOs_MASK);
 		ESP_WRITE_REG(0x3FF44008, bCl);
 	}
 }
 
+bool ILI9488_9BIT_PARALLEL::initI2Sparallel(I2Ssetup * i2sSetup)
+{
+	if (i2sSetup->port == 0)
+	{
+		port = I2S_NUM_0;
+		i2sRegBase = I2S0_REG_BASE;
+	}
+	else
+	{
+		port = I2S_NUM_1;
+		i2sRegBase = I2S1_REG_BASE;
+	}
+	dev = I2S[port];
+	int irq_source;
+	// Initialize I2S peripheral
+	if (port == I2S_NUM_0) 
+	{
+		periph_module_reset(PERIPH_I2S0_MODULE);
+		periph_module_enable(PERIPH_I2S0_MODULE);
+		iomux_clock = I2S0O_WS_OUT_IDX;
+		irq_source = ETS_I2S0_INTR_SOURCE;
+		iomux_signal_base = I2S0O_DATA_OUT8_IDX;
+	}
+	else 
+	{
+		periph_module_reset(PERIPH_I2S1_MODULE);
+		periph_module_enable(PERIPH_I2S1_MODULE);
+		iomux_clock = I2S1O_WS_OUT_IDX;
+		irq_source = ETS_I2S1_INTR_SOURCE;
+		iomux_signal_base = I2S1O_DATA_OUT0_IDX;
+	}
 
+	// Setup GPIOs
+	for (int i = 0; i < 8; i++) 
+	{
+		pinMode(i2sSetup->dataPins[i], OUTPUT);
+		gpio_matrix_out(i2sSetup->dataPins[i], iomux_signal_base + i, false, false);
+		pinList[i] = i2sSetup->dataPins[i];
+	}
+
+	gpio_matrix_out(i2sSetup->clockPin, iomux_clock, true, false);
+	pinList[8] = i2sSetup->clockPin;
+
+	// Setup I2S peripheral
+	dev_reset(dev);
+
+	// Set i2s mode to LCD mode
+	dev->conf2.val = 0;
+	dev->conf2.lcd_en = 1;
+	dev->conf2.lcd_tx_wrx2_en = 1; // Gil
+	dev->conf2.lcd_tx_sdx2_en = 0; // Gil
+	dev->conf.tx_slave_mod = 0;
+
+	// Setup i2s clock
+	dev->sample_rate_conf.val = 0;
+	// Third stage config, width of data to be written to IO (I think this should always be the actual data width?)
+	dev->sample_rate_conf.rx_bits_mod = 16;// bus_width;
+	dev->sample_rate_conf.tx_bits_mod = 16;// bus_width;
+	dev->sample_rate_conf.rx_bck_div_num = 2;
+	dev->sample_rate_conf.tx_bck_div_num = 2;
+
+	dev->clkm_conf.clka_en = 0;
+	dev->clkm_conf.clkm_div_a = 64;
+	dev->clkm_conf.clkm_div_b = 1;
+	dev->clkm_conf.clkm_div_num = i2sSetup->freq;// 6 (12.5MHz) - stable with no link list; // 8 = 10MHz (This is the only stable frequency) 4 = 20MHz, 2 = 40 MHz
+
+		// Some fifo conf I don't quite understand 
+	dev->fifo_conf.val = 0;
+	// Dictated by datasheet
+	dev->fifo_conf.rx_fifo_mod_force_en = 1;
+	dev->fifo_conf.tx_fifo_mod_force_en = 1;
+	// Not really described for non-pcm modes, although datasheet states it should be set correctly even for LCD mode
+	// First stage config. Configures how data is loaded into fifo
+	dev->fifo_conf.tx_fifo_mod = 1;
+	// Probably relevant for buffering from the DMA controller
+	dev->fifo_conf.rx_data_num = 0; //Thresholds. 
+	dev->fifo_conf.tx_data_num = 0;
+	// Enable DMA support
+	dev->fifo_conf.dscr_en = 1;
+
+	dev->conf1.val = 0;
+	dev->conf1.tx_stop_en = 1;
+
+	dev->conf1.tx_pcm_bypass = 1;
+
+	// Second stage config
+	// dev->conf_chan.val = 0;
+	// Tx in mono mode, read 32 bit per sample from fifo
+
+	dev->conf.tx_mono = 1; // Gil
+	//dev->conf.tx_msb_right = 1; // Gil - Table 59 in I2S spec
+
+	dev->conf_chan.tx_chan_mod = 1;
+	dev->conf_chan.rx_chan_mod = 1;
+
+	dev->conf.tx_right_first = 0;
+	dev->conf.rx_right_first = 0;
+
+	dev->lc_conf.out_eof_mode = 1;
+	dev->lc_conf.check_owner = 0;
+	//dev->lc_conf.out_auto_wrback = 1;
+
+	dev->timing.val = 0;
+
+	paraBusEnabled	= true;
+	initialized		= true;
+
+	return true;
+}
+
+void ILI9488_9BIT_PARALLEL::disableI2Sparallel()
+{
+	if (!paraBusEnabled)
+		return;
+	for (size_t i = 0; i < 9; i++)
+	{
+		gpio_matrix_out(pinList[i], 0x100, false, false);
+	}
+	paraBusEnabled = false;
+}
+
+bool ILI9488_9BIT_PARALLEL::restartI2Sparallel()
+{
+	if (!initialized)
+		return false;
+	for (int i = 0; i < 8; i++)
+	{
+		gpio_matrix_out(pinList[i], iomux_signal_base + i, false, false);
+	}
+	gpio_matrix_out(pinList[8], iomux_clock, true, false);
+
+	paraBusEnabled = true;
+	return true;
+}
+
+void ILI9488_9BIT_PARALLEL::fifo_reset(i2s_dev_t * dev)
+{
+	dev->conf.rx_fifo_reset = 1;
+	//  while(dev->state.rx_fifo_reset_back);
+	dev->conf.rx_fifo_reset = 0;
+	dev->conf.tx_fifo_reset = 1;
+	// while(dev->state.tx_fifo_reset_back);
+	dev->conf.tx_fifo_reset = 0;
+}
+
+void ILI9488_9BIT_PARALLEL::dev_reset(i2s_dev_t * dev)
+{
+	unsigned int lcConf = *((volatile unsigned char *)(((i2sRegBase + 0x60))));
+	unsigned int conf = *((volatile unsigned char *)(((i2sRegBase + 0x8))));
+	// do rmw
+	(*((volatile unsigned char *)(((i2sRegBase + 0x8)))) = conf | 0x5);
+	(*((volatile unsigned char *)(((i2sRegBase + 0x8)))) = conf);
+	(*((volatile unsigned char *)(((i2sRegBase + 0x60)))) = lcConf | 0x3);
+	(*((volatile unsigned char *)(((i2sRegBase + 0x60)))) = lcConf);
+}
+
+bool ILI9488_9BIT_PARALLEL::parallelStartDMA(lldesc_t * dma_descriptor)
+{
+	if (!paraBusEnabled)
+	{
+		return false;
+	}
+
+	// Stop all ongoing DMA operations
+	dev->out_link.stop = 1;
+	dev->out_link.start = 0;
+	dev->conf.tx_start = 0;
+	dev_reset(dev);
+
+	// Configure DMA burst mode
+	dev->lc_conf.val = I2S_OUT_DATA_BURST_EN | I2S_OUTDSCR_BURST_EN;
+	// Set address of DMA descriptor
+	dev->out_link.addr = (uint32_t)dma_descriptor;
+	// Start DMA operation
+	dev->out_link.start = 1;
+	dev->conf.tx_start = 1;
+
+	return true;
+}
+
+bool ILI9488_9BIT_PARALLEL::parallelIsDMAactiv()
+{
+	return (!((ESP_READ_REG(i2sRegBase + 0xBC) & 0x1) == 0x1));
+}
+
+bool ILI9488_9BIT_PARALLEL::parallelFIFOwriteWord(unsigned int data)
+{
+	if (!paraBusEnabled)
+	{
+		return false;
+	}
+	dev->fifo_conf.dscr_en = 0;
+	dev->conf.tx_start = 0;
+	dev->conf.tx_reset = 1;
+	dev->conf.tx_reset = 0;
+	dev->conf.tx_fifo_reset = 1;
+	dev->conf.tx_fifo_reset = 0;
+	(*((volatile unsigned int *)(((i2sRegBase)))) = data);
+	dev->conf.tx_start = 1;
+	dev->fifo_conf.dscr_en = 1;
+
+	return true;
+}
 //////////////////////////// ILI9488 SPI base class ////////////////////////////////////
 void ILI9488SPI_BASE::_init(unsigned char sck, unsigned char miso, unsigned char mosi, unsigned char ss, unsigned int freq, ili9488_mode mode)
 {
-	SPI.begin((char)sck, (char)miso, (char)mosi, (char)ss);
+	SPI.begin((char)sck, (char)-1, (char)mosi, (char)-1);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.setFrequency(freq);
 	SPI.setDataMode(3);
@@ -1303,10 +1586,6 @@ void ILI9488SPI_8C::setColor(unsigned char r, unsigned char g,unsigned char b)
 	fgColorL = ((r == 1) << 2) | ((g == 1) << 1) | (b == 1);
 	fgColorH = fgColorL << 3;
 	fgColorHL = fgColorL | fgColorH;
-	if (FGbitOn)
-	{
-		fgColorHL = fgColorHL | 0xc0;
-	}
 }
 
 void ILI9488SPI_8C::setBackColor(unsigned char r, unsigned char g,unsigned char b)
@@ -1422,7 +1701,14 @@ void ILI9488SPI_8C::drawHLine(short x, short y, int l)
 			index = (y*maxX + x + i) >> 1;
 			if (index >= 480 * 320 / 2)
 				return;
-			frameBuffers[currentFrameBufferIndex][index] = fgColorHL;
+			if (FGbitOn)
+			{
+				frameBuffers[currentFrameBufferIndex][index] = fgColorHL | 0xC0;
+			}
+			else
+			{
+				frameBuffers[currentFrameBufferIndex][index] = fgColorHL;
+			}
 			i += 2;
 			lo -= 2;
 		}

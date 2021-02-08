@@ -6,6 +6,14 @@
 #define GRAPHICS_h
 
 #include "Fonts/fonts.h"
+#include <sys/types.h>
+#include <freertos/FreeRTOS.h>
+#include <driver/gpio.h>
+#include <driver/periph_ctrl.h>
+#include <rom/gpio.h>
+#include <soc/gpio_sig_map.h>
+#include <driver/i2s.h>
+#include <rom/lldesc.h>
 
 class graphics
 {
@@ -101,7 +109,7 @@ class graphics
 
 #define ST77XXSPI_COMMAND			0
 #define ST77XXSPI_DATA				1
-#define NATIVE_VSPI
+#define noNATIVE_VSPI
 #ifdef NATIVE_VSPI
 #define ST77XXSPI_DATA_COMMAND_PIN	4
 #define ST77XXSPI_CS_PIN			5
@@ -184,28 +192,58 @@ public:
 	void drawCompressedGrayScaleBitmap(short x, short y, const unsigned short * dataArray, bool invert = false);
 };
 
-/********** ILI9488 9 bit parallel **********/
+/********** ILI9488 8/9 bit parallel **********/
 
-typedef struct
+#define PAR_IOs_MASK	(0x020CF034)
+#define GET_RGB666_H(R,G,B)\
+		((((unsigned int)G >> 5) & 0x7) | (((unsigned int)R << 1) & 0x1F8))
+#define GET_RGB666_L(R,G,B)\
+		((((unsigned int)B >> 2) & 0x3f) | (((unsigned int)G << 4) & 0x1c0))
+#define GET_RGB565_H(R,G,B)\
+		(((G >> 5) & 0x7) | (R & 0xf8))
+#define GET_RGB565_L(R,G,B)\
+		(((B >> 3)) | ((G << 3) & 0xe0))
+
+#define ILI9488P_MAP_9BIT(X)\
+	((0x000C0000 & ((unsigned int)(X) << 12)) | (0x0000F000 & ((unsigned int)(X) << 10)) | (0x00000030 & ((unsigned int)(X) << 4)) | (0x2000000 & ((unsigned int)(X) << 17)) | 0x4)
+#define ILI9488P_MAP_8BIT(X)\
+	((0x000C0000 & ((unsigned int)(X) << 12)) | (0x0000F000 & ((unsigned int)(X) << 10)) | (0x00000030 & ((unsigned int)(X) << 4)) | 0x4)
+
+typedef enum ParaBusFreq { _8MHz = 10, _10MHz = 8, _12_5MHz = 6, _16MHz = 5, _20MHz = 4 };
+
+typedef struct _I2Ssetup
 {
-	unsigned char dataPins[8];
-	unsigned char WRpin;
-	unsigned char D_Cpin;
-	unsigned char ResetPin;
-} ILI9488P_SETUP;
+	unsigned int	port;
+	unsigned char	dataPins[8];
+	unsigned char	clockPin;
+	ParaBusFreq		freq;
+} I2Ssetup;
+
+#define I2S0_REG_BASE	0x3FF4F000
+#define I2S1_REG_BASE	0x3FF6D000
 
 class ILI9488_9BIT_PARALLEL : public graphics
 {
+private:
+	void fifo_reset(i2s_dev_t* dev);
+	void dev_reset(i2s_dev_t* dev);
+	i2s_port_t port;
+	i2s_dev_t* I2S[I2S_NUM_MAX] = { &I2S0, &I2S1 };
+	unsigned int i2sRegBase = I2S0_REG_BASE;
+	i2s_dev_t* dev;
+	unsigned char pinList[9];
+	volatile int iomux_signal_base;
+	volatile int iomux_clock;
 protected:
-	void reset();
 	unsigned int bCh, bCl;
+	bool _9bitFlag = false, paraBusEnabled = false, initialized = false;
 public:
 	ILI9488_9BIT_PARALLEL(short maxX, short maxY) : graphics(maxX, maxY) {};
 	~ILI9488_9BIT_PARALLEL() {};
 
 	void setXY(short x1, short y1, short x2, short y2);
 	void setXY(short x, short y);
-	void init(ILI9488P_SETUP * ili9488setup);
+	void init(bool _9bit = false);
 	void drawPixel(short x, short y);
 	void fillScr(unsigned char r,unsigned char g,unsigned char b);
 	void setColor(unsigned char r, unsigned char g, unsigned char b);
@@ -213,6 +251,12 @@ public:
 	void drawVLine(short x, short y, int l);
 	void drawCompressed24bitBitmap(short x, short y, const unsigned int * dataArray);
 	void drawCompressedGrayScaleBitmap(short x, short y, const unsigned short * dataArray, bool invert = false);
+	bool initI2Sparallel(I2Ssetup * i2sSetup);
+	void disableI2Sparallel();
+	bool restartI2Sparallel();
+	bool parallelStartDMA(lldesc_t* dma_descriptor);
+	bool parallelIsDMAactiv();
+	bool parallelFIFOwriteWord(unsigned int data);
 };
 
 #define DRAW_PIXEL(x,y)\
@@ -228,6 +272,7 @@ public:
 extern PCF8574 pcf8574;
 
 #define ESP_WRITE_REG(REG,DATA) (*((volatile unsigned int *)(((REG)))) = DATA )
+#define ESP_READ_REG(REG) (*((volatile unsigned int *)(((REG)))))
 
 #define ILI9488SPI_COMMAND	0
 #define ILI9488SPI_DATA		1
