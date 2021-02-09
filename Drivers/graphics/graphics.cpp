@@ -1677,12 +1677,6 @@ inline void ILI9488SPI_8C::drawPixel(short x, short y, unsigned char color)
 
 }
 
-void ILI9488SPI_8C::draw2Pixels(short x, short y, unsigned char color)
-{
-	unsigned int index = (y*maxX + x) >> 1;
-	frameBuffers[currentFrameBufferIndex][index] = color;
-}
-
 void ILI9488SPI_8C::drawHLine(short x, short y, int l)
 {
 	size_t i = 0,lo = l;
@@ -1739,10 +1733,11 @@ inline bool ILI9488SPI_8C::isFGbitSet(short x, short y)
 /* Each byte represents two pixels: SRGBSRGB - S = Skip, if set to 1 pixel is not drawn */
 
 #define DRAW_PIX(X,Y,PIX_DATA)\
-		if (!isFGbitSet(X, Y)) drawPixel(X, Y, (PIX_DATA) & 0x7)
+		if (!isFGbitSet(X, Y)) drawPixel(X, Y, (PIX_DATA) & 0x7); else collision = true;
 
-void ILI9488SPI_8C::drawBitmap(short x, short y, const unsigned char * dataArray,bool useSkipBit, ili9488_8C_flipOption flipOpt)
+bool ILI9488SPI_8C::drawBitmap(short x, short y, const unsigned char * dataArray,bool useSkipBit, ili9488_8C_flipOption flipOpt)
 {
+	bool collision = false;
 	unsigned char pixelData;
 	unsigned short width, hight;
 	unsigned int index = 4,size;
@@ -1822,6 +1817,7 @@ void ILI9488SPI_8C::drawBitmap(short x, short y, const unsigned char * dataArray
 			}
 		}
 	}
+	return collision;
 }
 
 /************** ST7789 ***************/

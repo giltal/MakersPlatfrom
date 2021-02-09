@@ -390,11 +390,10 @@ public:
 
 	inline void drawPixel(short x, short y);
 	inline void drawPixel(short x, short y, unsigned char color);
-	void draw2Pixels(short x, short y, unsigned char color);
 	inline bool isFGbitSet(short x, short y);
 	void fillScr(unsigned char r, unsigned char g,unsigned char b);
 	void drawHLine(short x, short y, int l);
-	void drawBitmap(short x, short y, const unsigned char * dataArray, bool useSkipBit, ili9488_8C_flipOption flipOpt = noflip);
+	bool drawBitmap(short x, short y, const unsigned char * dataArray, bool useSkipBit, ili9488_8C_flipOption flipOpt = noflip);
 	void flushFrameBuffer();
 	//int	 swapFrameBuffer();
 };
