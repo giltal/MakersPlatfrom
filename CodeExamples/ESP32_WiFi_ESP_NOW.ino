@@ -114,15 +114,11 @@ void setup()
 	/* Register peer */
 	esp_now_peer_info_t peerInfo;
 
+	memset(&peerInfo, 0, sizeof(peerInfo));
+
 	// when flashing the board
 #if defined(MASTER)
 	targetMACaddress = peer01MACaddress;
-#else
-	targetMACaddress = masterMACaddress;
-#endif
-
-	memcpy(peerInfo.peer_addr, targetMACaddress, MAC_LEN);
-
 	peerInfo.channel = 0;
 	peerInfo.encrypt = false;
 
@@ -130,6 +126,12 @@ void setup()
 	if (esp_now_add_peer(&peerInfo) != ESP_OK) {
 		Serial.println("Failed to add peer");
 	}
+#else
+	targetMACaddress = masterMACaddress;
+#endif
+
+	memcpy(peerInfo.peer_addr, targetMACaddress, MAC_LEN);
+
 }
 
 // the loop function runs over and over again until power down or reset
@@ -172,7 +174,7 @@ void loop()
 		iteration++;
 		// Send message via ESP-NOW
 		result = esp_now_send(targetMACaddress, data, dataLength);
-		sleep(500);
+		delay(2000);
 	}
 }
 
